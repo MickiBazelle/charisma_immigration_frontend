@@ -1,32 +1,32 @@
 import axios from "axios";
 import config from "./config";
+import Cookie from "js-cookie";
+
+// const baseURL = "http://127.0.0.1:9999/api/v1/";
+// const baseURL = "https://charismaimmigration.up.railway.app/api/v1/";
 
 const nonAuthEndpoints = [
   "/accounts/login/",
   "/messages/",
   "/clients/login/",
+  "/login/",
   "/clients/register/",
   "testimonials/",
 ];
 
 const axiosInstance = axios.create({
-  baseURL: config.baseURLProd.startsWith("http")
-    ? `${config.baseURLProd}`
-    : `https://${config.baseURLProd}`,
-  timeout: 15000,
+  baseURL: config.baseURLProd,
+  timeout: 30000,
   headers: {
-    // Authorization: localStorage.getItem("token")
-    //   ? "Bearer " + localStorage.getItem("token")
-    //   : null,
     "Content-Type": "application/json",
     accept: "application/json",
+    "api-key": config.apiKey,
   },
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    console.log(`TOKEN=> ${token}`);
+    const token = Cookie.get("token");
     if (!nonAuthEndpoints.includes(config.url)) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -50,11 +50,12 @@ axiosInstance.interceptors.response.use(
       );
       return Promise.reject(error);
     }
-    if (
-      error.response.status === 403 &&
-      error.response.data.code === "token_not_valid"
-    ) {
-      window.location = "/accounts/login"; // Redirect to /accounts/login
+    if (error.response.status === 401) {
+      window.location = "/"; // Redirect to /login/
+      return Promise.reject(error);
+    }
+    if (error.response.status === 403) {
+      window.location = "/"; // Redirect to /login/
       return Promise.reject(error);
     }
 
@@ -62,7 +63,7 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       originalRequest.url === config.baseURLProd + "token/refresh/"
     ) {
-      window.location.href = "/login/";
+      window.location.href = "/";
       return Promise.reject(error);
     }
 
@@ -71,7 +72,7 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       error.response.statusText === "Unauthorized"
     ) {
-      const refreshToken = localStorage.getItem("refresh_token");
+      const refreshToken = Cookie.get("refreshToken");
 
       if (refreshToken) {
         const tokenParts = JSON.parse(atob(refreshToken.split(".")[1]));
@@ -83,8 +84,7 @@ axiosInstance.interceptors.response.use(
           return axiosInstance
             .post("/token/refresh/", { refresh: refreshToken })
             .then((response) => {
-              localStorage.setItem("access_token", response.data.access);
-              localStorage.setItem("refresh_token", response.data.refresh);
+              setAuthToken(response.data.token, response.data.refresh_token);
 
               axiosInstance.defaults.headers["Authorization"] =
                 "JWT " + response.data.access;
@@ -93,12 +93,14 @@ axiosInstance.interceptors.response.use(
 
               return axiosInstance(originalRequest);
             })
-            .catch((err) => {});
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
-          window.location.href = "/login/";
+          window.location.href = "/";
         }
       } else {
-        window.location.href = "/login/";
+        window.location.href = "/";
       }
     }
 
@@ -106,5 +108,23 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const setAuthToken = (token, refresh_token) => {
+  Cookie.set("token", token, {
+    expires: 1,
+    secure: true,
+  });
+  Cookie.set("refresh_token", refresh_token, {
+    expires: 7,
+    secure: true,
+  });
+  // const user = useUserStore.getState().user;
+  // const user = useAuthStore.getState().allUserData; //jwt_decode(token) ?? null;
+  // if (user) {
+  //   useAuthStore.getState().setUser(user);
+  // } else {
+  //   setAuthToken.getState().setLoading(false);
+  // }
+};
 
 export default axiosInstance;
