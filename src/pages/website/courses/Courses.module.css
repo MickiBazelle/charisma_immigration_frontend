@@ -1,0 +1,18 @@
+.underline-offset {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-offset::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px; /* Adjust this value to increase or decrease the space */
+  height: 2px; /* Adjust the thickness of the underline */
+  background-color: currentColor;
+}
+
+.shadowTop {
+  box-shadow: 0 -10px 10px -5px rgba(0, 0, 0, 0.3); /* Adjust the shadow properties as needed */
+}

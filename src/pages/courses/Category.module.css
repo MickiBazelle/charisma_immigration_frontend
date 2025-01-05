@@ -1,0 +1,33 @@
+.create_category_btn {
+  margin-top: 7rem;
+}
+
+.category_action_bar {
+  margin-top: 6rem;
+}
+
+/* FormPanel.css */
+
+.formPanel {
+  position: fixed;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease; /* Transition for sliding animation */
+}
+
+.formPanel.open {
+  right: 0; /* Slide in the panel when open */
+}
+
+.panelContent {
+  padding: 20px;
+}
+
+.toggleBtn {
+  position: absolute;
+  top: 20px;
+  right: -40px;
+}

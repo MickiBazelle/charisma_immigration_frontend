@@ -1,0 +1,21 @@
+.border-gradient {
+  position: relative;
+  border-width: 2px; /* Adjust the border width as needed */
+}
+
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  top: -2px; /* Adjust according to border width */
+  left: -2px; /* Adjust according to border width */
+  right: -2px; /* Adjust according to border width */
+  bottom: -2px; /* Adjust according to border width */
+  background: linear-gradient(to left, #00e0ee, #ad00fe);
+  z-index: -1;
+  border-radius: inherit; /* Maintain border radius */
+}
+
+.border-gradient > * {
+  position: relative;
+  z-index: 1;
+}

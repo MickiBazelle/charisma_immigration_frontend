@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-inter;
+}
+
+.underline-offset {
+  @apply relative inline-block;
+}
+
+.underline-offset::after {
+  content: "";
+  @apply absolute left-0 right-0 bg-current;
+  bottom: 0px; /* Adjust this value to increase or decrease the space */
+  height: 1px; /* Adjust the thickness of the underline */
+  background-color: #507ef5;
+}
+
+@layer utilities {
+  @variants responsive {
+    /* Hide scrollbar from Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar from Firefox, Edge and IE */
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+  }
+}

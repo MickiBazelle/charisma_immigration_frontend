@@ -1,0 +1,17 @@
+.alert_dismissible .btn_close {
+  font-size: 10px;
+  padding: 1.05rem 1.25rem;
+}
+
+.alert_btn {
+  position: relative;
+  font-size: 10px;
+  text-align: center;
+  top: 5px;
+  right: 0;
+  float: right;
+}
+
+.alert_error {
+  display: inline-block;
+}

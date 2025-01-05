@@ -1,0 +1,65 @@
+#main_content_bg {
+  background-color: #f0f3f7;
+}
+
+.auth_full_page_content {
+  background-color: var(--bs-secondary-bg);
+}
+
+body[data-layout="horizontal"] .page_content {
+  margin-top: 70px;
+  padding: calc(55px + 1.5rem) calc(1.5rem / 2) 60px calc(1.5rem / 2) !important;
+}
+
+@media (max-width: 991.98px) {
+  body[data-layout="horizontal"] .page_content {
+    padding-top: 1.5rem;
+  }
+}
+
+@media print {
+  .footer,
+  .navbar-header,
+  .page-title-box,
+  .right-bar,
+  .vertical-menu {
+    display: none !important;
+  }
+  .card-body,
+  .main-content,
+  .page_content,
+  .right-bar,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  .card {
+    border: 0;
+  }
+}
+
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+
+.container,
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+  /* --bs-gutter-x: 3rem; */
+  /* --bs-gutter-y: 0; */
+  /* width: 100%; */
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
+  margin-right: auto;
+  margin-left: auto;
+}
