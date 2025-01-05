@@ -1,9 +1,6 @@
 import axios from "axios";
 import config from "./config";
 
-// const baseURL = "http://127.0.0.1:9999/api/v1/";
-// const baseURL = "https://charismaimmigration.up.railway.app/api/v1/";
-
 const nonAuthEndpoints = [
   "/accounts/login/",
   "/messages/",
@@ -13,7 +10,9 @@ const nonAuthEndpoints = [
 ];
 
 const axiosInstance = axios.create({
-  baseURL: config.baseURLProd,
+  baseURL: config.baseURLProd.startsWith("http")
+    ? `${config.baseURLProd}/api/v1`
+    : `https://${config.baseURLProd}/api/v1`,
   timeout: 15000,
   headers: {
     // Authorization: localStorage.getItem("token")
@@ -28,14 +27,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     console.log(`TOKEN=> ${token}`);
-    if (
-      !nonAuthEndpoints.includes(config.url)
-      // config.url !== "/accounts/login/" &&
-      // config.url !== "/messages/" &&
-      // config.url !== "/clients/login/" &&
-      // config.url !== "/clients/register/" &&
-      // config.url !== "testimonials/"
-    ) {
+    if (!nonAuthEndpoints.includes(config.url)) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
