@@ -11,8 +11,8 @@ const nonAuthEndpoints = [
 
 const axiosInstance = axios.create({
   baseURL: config.baseURLProd.startsWith("http")
-    ? `${config.baseURLProd}/api/v1`
-    : `https://${config.baseURLProd}/api/v1`,
+    ? `${config.baseURLProd}`
+    : `https://${config.baseURLProd}`,
   timeout: 15000,
   headers: {
     // Authorization: localStorage.getItem("token")
