@@ -1,19 +1,35 @@
 import React, { useState } from "react";
 import NavigationLink from "./NavigationLink";
+import { useNavigate, useLocation } from "react-router-dom";
 
-function NavLinks() {
+function NavLinks({ onServicesClick }) {
   const [activeItem, setActiveItem] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handleNavItemClick = (item) => {
     setActiveItem(item);
+  };
+
+  const handleServicesClick = (e) => {
+    e.preventDefault();
+    handleNavItemClick("services");
+
+    if (location.pathname !== "/") {
+      // Pass state to indicate we want to scroll to services after navigation
+      navigate("/", { state: { scrollToServices: true } });
+    } else {
+      onServicesClick?.();
+    }
   };
 
   return (
     <>
       <NavigationLink
         name="services"
-        to="/"
+        to="#services-section"
         isActive={activeItem === "services"}
-        onClick={() => handleNavItemClick("services")}
+        onClick={handleServicesClick}
       >
         Services
       </NavigationLink>

@@ -3,10 +3,10 @@ import CINavbar from "./CINavbar";
 import LoginButton from "./LoginButton";
 import { Link } from "react-router-dom";
 
-const CharismaImmigrationsHeader = (serVicesRef) => (
+const CharismaImmigrationsHeader = ({ onServicesClick }) => (
   <div className="">
     <div className="">
-      <CINavbar serVicesRef={serVicesRef} />
+      <CINavbar onServicesClick={onServicesClick} />
     </div>
   </div>
 );

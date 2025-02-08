@@ -34,6 +34,7 @@ function Login(props) {
     const password = formData.password;
 
     const loginData = await loginUser(email, password);
+    console.log(loginData.data);
     if (loginData.data !== null) {
       setIsLoading(false);
       navigate("/");

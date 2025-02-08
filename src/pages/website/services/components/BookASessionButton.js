@@ -4,23 +4,29 @@ import { PopupModal } from "react-calendly";
 
 function BookASessionButton() {
   const [isCalendlyModalOpen, setCalendlyModalOpen] = useState(false);
+  const calendlyUrl = "https://calendly.com/charismaimmigrationprojects";
 
-  const navigate = useNavigate();
-  const handleClick = (e) => {
-    
-    setCalendlyModalOpen(!isCalendlyModalOpen);
+  const handleClick = () => {
+    // Check if Calendly is already authenticated
+    if (window.Calendly) {
+      setCalendlyModalOpen(true);
+    } else {
+      // If not authenticated, open in new tab
+      window.open(calendlyUrl, "_blank");
+    }
   };
+
   return (
     <div className="flex justify-center">
       <button
         onClick={handleClick}
-        className="mt-24 mb-16 gap-1 justify-center items-center w-[156px] h-[48px] leading-6 text-white whitespace-nowrap rounded-xl  shadow-sm bg-gradient-to-tr from-brightViolet via-blueLotus to-neonBlue border-1 border-purpleShadeBush border-solid max-md:mt-10 "
+        className="mt-24 mb-16 gap-1 justify-center items-center w-[156px] h-[48px] leading-6 text-white whitespace-nowrap rounded-xl  shadow-sm bg-gradient-to-tr from-brightViolet via-blueLotus to-neonBlue border-1 border-purpleShadeBush border-solid max-md:mt-10"
       >
         Book A Session
       </button>
-      {
+      {isCalendlyModalOpen && (
         <PopupModal
-          url="https://calendly.com/charismaimmigrationprojects"
+          url={calendlyUrl}
           pageSettings={{
             backgroundColor: "#ffffff",
             hideEventTypeDetails: false,
@@ -33,7 +39,7 @@ function BookASessionButton() {
           onModalClose={() => setCalendlyModalOpen(false)}
           open={isCalendlyModalOpen}
         />
-      }
+      )}
     </div>
   );
 }

@@ -11,6 +11,8 @@ import OurServices from "../../../components/website/landing_page/OurServices";
 import WebsiteFooter from "../../../components/website/Footer";
 import Testimonials from "./components/Testimonials";
 import CollapsibleFAQItem from "../../../components/website/CollapsibleFAQItem";
+import { useScroll } from "../../../hooks/useScroll";
+import { useLocation } from "react-router-dom";
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
@@ -197,7 +199,26 @@ function ActionButton(props) {
 }
 
 function LandingPageLight(props) {
-  const serices = useRef(null);
+  const servicesRef = useRef(null);
+  const { scrollToElement } = useScroll();
+  const location = useLocation();
+
+  const handleServicesClick = () => {
+    scrollToElement(servicesRef);
+  };
+
+  // Handle scroll after navigation
+  useEffect(() => {
+    // Check if we have a hash in the URL or if we're coming from another page
+    if (
+      location.hash === "#services-section" ||
+      location.state?.scrollToServices
+    ) {
+      setTimeout(() => {
+        scrollToElement(servicesRef);
+      }, 100);
+    }
+  }, [location]);
 
   return (
     <div className={`${container}`}>
@@ -210,12 +231,14 @@ function LandingPageLight(props) {
               className="object-cover absolute inset-0 "
             />
             <div className="flex relative flex-col justify-center px-16 py-4 text-base leading-6 max-md:px-5 max-md:max-w-full">
-              <CharismaImmigrationsHeader />
+              <CharismaImmigrationsHeader
+                onServicesClick={handleServicesClick}
+              />
             </div>
             <div className="relative justify-end mt-24 mb-52 max-w-full w-full md:w-[1280px] max-md:pl-5 max-md:my-10">
               <div className="flex mt-24 gap-5 max-md:flex-col max-md:gap-0">
                 <div className="flex flex-col w-full md:w-[54%] max-md:ml-0 font-customFont">
-                  <LearningPlatformSection serVicesRef={serices} />
+                  <LearningPlatformSection serVicesRef={servicesRef} />
                 </div>
                 <div className="flex overflow-hidden relative flex-col justify-center self-stretch mt-10 md:mt-0">
                   <div className="flex flex-col ml-0 md:ml-5 w-full max-md:w-full">
@@ -258,7 +281,9 @@ function LandingPageLight(props) {
           </div>
         </div>
         <Features />
-        <OurServices />
+        <div id="services-section" ref={servicesRef}>
+          <OurServices />
+        </div>
         <Testimonials />
         <div className="flex justify-center items-center self-stretch px-5 md:px-16 py-12 mt-1.5 w-full bg-white">
           <div className="flex flex-col items-center my-12 w-full max-w-full md:max-w-[1216px]">

@@ -6,7 +6,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import NavLinks from "./NavLinks";
 
-function CINavbar(serVicesRef) {
+function CINavbar({ onServicesClick }) {
   const [menuOpen, setmenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -19,6 +19,10 @@ function CINavbar(serVicesRef) {
 
   const onmenuOpen = () => {
     setmenuOpen(!menuOpen);
+  };
+
+  const handleServicesClick = () => {
+    onServicesClick();
   };
 
   const handleLogoClick = (e) => {
@@ -62,7 +66,7 @@ function CINavbar(serVicesRef) {
           className="hidden md:flex items-center font-semibold text-slate-600 z-auto static w-auto
         opacity-100 transition-all ease-in duration-500"
         >
-          <NavLinks />
+          <NavLinks onServicesClick={onServicesClick} />
         </ul>
 
         <div className="hidden md:block">
@@ -84,7 +88,7 @@ function CINavbar(serVicesRef) {
               menuOpen ? "translate-y-0" : "-translate-y-full"
             } duration-300 ease-in-out`}
           >
-            <NavLinks />
+            <NavLinks onServicesClick={onServicesClick} />
           </ul>
         )}
       </div>

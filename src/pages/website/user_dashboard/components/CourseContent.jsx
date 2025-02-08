@@ -8,11 +8,32 @@ import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import RightPanelContent from "./RightPanelContent";
 import EmptyCourse from "./EmptyCourse";
+import axiosClientInstance from "../../../../utils/axios_client";
 
 function CourseContent() {
   const [activeTab, setActiveTab] = useState("About");
   const [isMdScreen, setIsMdScreen] = useState(false);
+  const [courseData, setCourseData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        const response = await axiosClientInstance.get("/course/");
+        console.log(response.data);
+        setCourseData(response.data);
+      } catch (err) {
+        setError(err.message);
+        toast.error("Failed to load course data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, []);
 
   // Check the screen size
   useEffect(() => {
@@ -42,6 +63,31 @@ function CourseContent() {
       toast.error("Could not log you out. Try again later");
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Error: {error}
+      </div>
+    );
+  }
+
+  if (!courseData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <EmptyCourse />
+      </div>
+    );
+  }
+
   const renderContent = () => {
     switch (activeTab) {
       case "About":
@@ -50,9 +96,7 @@ function CourseContent() {
             className="text-riverBed font-inter"
             style={{ fontSize: "14px", lineHeight: "1.29" }}
           >
-            Lorem ipsum dolor sit amet consectetur. Viverra netus consequat arcu
-            et eget eleifend ultricies faucibus. Facilisi augue magna lectus
-            arcu egestas sagittis volutpat egestas cursus.
+            {courseData.description}
           </div>
         );
       case "Q&A":
@@ -61,43 +105,19 @@ function CourseContent() {
             className="text-riverBed font-inter font-normal text-left"
             style={{ fontSize: "14px", lineHeight: "1.29" }}
           >
-            Lorem ipsum dolor sit amet consectetur. Viverra netus consequat arcu
-            et eget eleifend ultricies faucibus. Facilisi augue magna lectus
-            arcu egestas sagittis volutpat egestas cursus. Tincidunt amet at ac
-            pharetra eget auctor justo faucibus. Platea sed consectetur
-            elementum et.d purus nulla dictum odio. Massa eu diam sem ipsum sed
-            porttitor pulvinar. Nisl erat in congue quisque pellentesque egestas
-            lectus aliquet. Id feugiat faucibus nisl turpis ultrices elementum.
-            Sagittis sit nec platea diam ac penatibus. Sed gravida pellentesque
-            mi felis quam magna.
-            <br />
-            Lorem ipsum dolor sit amet consectetur. Viverra netus consequat arcu
-            et eget eleifend ultricies faucibus. Facilisi augue magna lectus
-            arcu egestas sagittis volutpat egestas cursus. Tincidunt amet at ac
-            pharetra eget auctor justo faucibus. Platea sed consectetur
-            elementum et.d purus nulla dictum odio. Massa eu diam sem ipsum sed
-            porttitor pulvinar. Nisl erat in congue quisque pellentesque egestas
-            lectus aliquet. Id feugiat faucibus nisl turpis ultrices elementum.
-            Sagittis sit nec platea diam ac penatibus. Sed gravida pellentesque
-            mi felis quam magna.
+            Questions and answers about the course will be displayed here.
           </div>
         );
       case "Course Content":
         return (
           <div className="lg:hidden">
-            <RightPanelContent />;
+            <RightPanelContent chapters={courseData.chapters} />;
           </div>
         );
       default:
         return null;
     }
   };
-
-  // return (
-  //   <div className="flex justify-center items-center h-screen">
-  //     <EmptyCourse />
-  //   </div>
-  // );
 
   return (
     <div>
@@ -109,11 +129,11 @@ function CourseContent() {
             placeholder="Search"
             type="text"
             style={{ height: "44px", border: "1px solid #d0d5dd" }}
-          ></input>
+          />
         </div>
         <button
           onClick={onLogoutClick}
-          className=" right-0 mr-14 bg-lightRed rounded-xl text-white h-[44px] w-[91px]"
+          className="right-0 mr-14 bg-lightRed rounded-xl text-white h-[44px] w-[91px]"
         >
           Logout
         </button>
@@ -123,41 +143,57 @@ function CourseContent() {
         <ToastContainer pauseOnHover theme="colored" />
 
         <div className="">
-          <div className="mt-8  bg-alabaster h-full font-inter">
+          <div className="mt-8 bg-alabaster h-full font-inter">
             <div className="mx-12 lg:w-[39vw]">
               <div className="flex pt-8 text-xsm gap-1 text-[#9da4b1] cursor-pointer">
-                <div>Chapter 3</div>
+                <div>Chapter {courseData.chapters[0]?.order || 1}</div>
                 <div>&gt;</div>
-                <div>Migrating with family and or your partner</div>
+                <div>{courseData.chapters[0]?.title || "Course Content"}</div>
               </div>
-              <iframe
-                className="mt-4 sm:mt-[50px] md:mt-2 h-[200px] sm:h-[250px] md:h-[300px] lg:h-[326px] w-full rounded-lg"
-                src="https://www.youtube.com/embed/sMB2MNP-vkA"
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+              {courseData.chapters[0]?.contents[0]?.video_url && (
+                <iframe
+                  className="mt-4 sm:mt-[50px] md:mt-2 h-[200px] sm:h-[250px] md:h-[300px] lg:h-[326px] w-full rounded-lg"
+                  src={courseData.chapters[0].contents[0].video_url}
+                  title={courseData.chapters[0].contents[0].title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              )}
               <div
                 className="mt-8 font-inter font-medium"
                 style={{ fontSize: "20px" }}
               >
-                How to migrate to the US 101
+                {courseData.title}
               </div>
               <div
-                className="mt-2 flex items-center gap-2.5 text-mistBlue font-inter font-normal"
+                className="mt-2 flex items-center gap-2.5 text-mistBlue font-inter font-normal flex-wrap"
                 style={{ fontSize: "14px" }}
               >
-                <div className="mt-2">Course by Daniel Surname</div>
+                <div className="mt-2">
+                  Course by {courseData.instructor.user.first_name}{" "}
+                  {courseData.instructor.user.last_name}
+                </div>
                 <div className="h-[7px] w-[7px] bg-black rounded-full"></div>
                 <Img
                   className=""
                   src={star}
                   style={{ width: "20px", height: "19.5px" }}
                 />
-
                 <div className="">4.8(1,820)</div>
                 <div className="h-[7px] w-[7px] bg-black rounded-full"></div>
-                <div className="">Beginner friendly</div>
+                <div className="">
+                  {courseData.total_duration_display !== "0:00"
+                    ? `${courseData.total_duration_display} total hours`
+                    : "Duration not available"}
+                </div>
+                {!courseData.is_subscribed && (
+                  <>
+                    <div className="h-[7px] w-[7px] bg-black rounded-full"></div>
+                    <div className="">
+                      Starting from ${courseData.pricing.monthly.price}/month
+                    </div>
+                  </>
+                )}
               </div>
               <div className="mt-6 flex border-b gap-4">
                 <button
@@ -196,7 +232,11 @@ function CourseContent() {
           </div>
         </div>
         <div className="sm:hidden lg:block sm:w-0 lg:w-[36vw] pl-10 pr-14">
-          <RightPanelContent />
+          <RightPanelContent
+            chapters={courseData.chapters}
+            isSubscribed={courseData.is_subscribed}
+            pricing={courseData.pricing}
+          />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const ServiceCard = ({ imageSrc, title, description, moreInfoText, route }) => (
@@ -64,11 +64,11 @@ const services = [
   {
     imageSrc:
       "https://cdn.builder.io/api/v1/image/assets/TEMP/79e61ef1a9ba37a48cdd491de5c4e669ec542ad4eff3d0d1d39aef39a1169afe?apiKey=c9788533178a4027a387d37dd621471a&",
-    title: "Family Based Greencards",
+    title: "Take our Course",
     description:
       "Assisting in the preparation and filing of the necessary paperwork to obtain a residence permit in a new country.",
     moreInfoText: "More Information",
-    route: "/family-based-greencard/",
+    route: "/courses/",
   },
   {
     imageSrc:
@@ -99,7 +99,7 @@ const services = [
   },
 ];
 
-function OurServices() {
+const OurServices = () => {
   return (
     <section className="flex flex-col mt-[100px] items-center md:px-[55px]">
       <h2 className="text-sm font-medium font-inter leading-6 text-center text-blue-500 max-md:max-w-full">
@@ -127,6 +127,6 @@ function OurServices() {
       </div>
     </section>
   );
-}
+};
 
 export default OurServices;
